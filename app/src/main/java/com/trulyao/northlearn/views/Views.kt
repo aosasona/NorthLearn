@@ -3,5 +3,9 @@ package com.trulyao.northlearn.views
 
 enum class Views {
     Login,
-    Quiz
+    Home,
+    Quiz,
+    QuizScore,
+    Notes,
+    Note
 }

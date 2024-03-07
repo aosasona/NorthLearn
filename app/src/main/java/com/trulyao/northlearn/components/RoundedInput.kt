@@ -15,7 +15,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation.Companion.None
 import androidx.compose.ui.unit.dp
 
-// TODO: complete this
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoundedInput(
@@ -23,7 +22,7 @@ fun RoundedInput(
     onChange: (String) -> Unit,
     placeholder: @Composable () -> Unit,
     keyboardOptions: KeyboardOptions,
-    visualTransformation: VisualTransformation? = null
+    visualTransformation: VisualTransformation? = null,
 ) {
     TextField(
         value = value,
@@ -36,7 +35,7 @@ fun RoundedInput(
         shape = RoundedCornerShape(8.dp),
         keyboardOptions = keyboardOptions,
         visualTransformation = if (visualTransformation !== null) visualTransformation else None,
-        colors = TextFieldDefaults.textFieldColors(
+        colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         )
