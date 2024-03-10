@@ -1,22 +1,38 @@
 package com.trulyao.northlearn.models
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 
 const val API_URL = "https://animapi.fly.dev"
 
+private val json = Json {
+    ignoreUnknownKeys = true
+}
+
 // Base retrofit instance which is then reused by the service (i.e implements the service)
 private val retrofit = Retrofit.Builder()
-    .addConverterFactory(ScalarsConverterFactory.create())
+    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
     .baseUrl(API_URL)
     .build()
 
-data class Animal(val name: String, val slugifiedName: String, val filename: String)
+@Serializable
+data class Animal(
+    val name: String,
+
+    @SerialName("slugified_name")
+    val slugifiedName: String,
+
+    val filename: String,
+)
 
 interface AnimalAPIService {
     @GET("animals.json")
-    suspend fun getAnimals(): String
+    suspend fun getAnimals(): List<Animal>
 }
 
 // Create retrofit singleton - this will be reused across all API calls
