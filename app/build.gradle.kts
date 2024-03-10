@@ -70,4 +70,8 @@ dependencies {
 
     // datastore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // data fetching
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 }

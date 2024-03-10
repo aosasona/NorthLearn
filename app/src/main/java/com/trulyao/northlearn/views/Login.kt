@@ -68,7 +68,7 @@ fun Login() {
                 throw Exception("Invalid credentials provided, please try again!")
             }
 
-            Store.set(context, key = StoreKey.IsSignedIn, value = true)
+            Store.set(context, key = StoreKey.User, value = user.id)
 
         } catch (e: Exception) {
             Alert.show(context, message = e.localizedMessage!!, alertType = Alert.AlertType.Error)

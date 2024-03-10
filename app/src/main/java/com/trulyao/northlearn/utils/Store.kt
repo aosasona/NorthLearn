@@ -3,8 +3,8 @@ package com.trulyao.northlearn.utils
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 enum class StoreKey {
-    IsSignedIn
+    User
 }
 
 // A simple wrapper class to get and set (insert, update) data in the DataStore
@@ -22,7 +22,7 @@ class Store {
         // Get preference key and cast to generic type, unsafe but we are hoping the generic will constraint the input anyway
         private fun <T> getPrefKey(key: StoreKey): Preferences.Key<T> {
             return when (key) {
-                StoreKey.IsSignedIn -> booleanPreferencesKey("is_signed_in")
+                StoreKey.User -> intPreferencesKey("signed_in_user")
             } as Preferences.Key<T>
         }
 

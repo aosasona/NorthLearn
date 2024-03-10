@@ -21,3 +21,11 @@ public fun findByUsername(username: String): Optional<User> {
 
     return Optional.empty()
 }
+
+public fun findByID(userID: Int): Optional<User> {
+    for (user in users) {
+        if (user.id == userID) return Optional.of(user)
+    }
+
+    return Optional.empty();
+}

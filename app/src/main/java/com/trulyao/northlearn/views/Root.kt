@@ -15,7 +15,9 @@ import androidx.navigation.compose.rememberNavController
 import com.trulyao.northlearn.ui.theme.NorthLearnTheme
 import com.trulyao.northlearn.utils.Store
 import com.trulyao.northlearn.utils.StoreKey
+import com.trulyao.northlearn.views.notes.Notes
 import com.trulyao.northlearn.views.quiz.Quiz
+import com.trulyao.northlearn.views.quiz.QuizSplash
 
 
 @Composable
@@ -23,8 +25,8 @@ fun Root(applicationContext: Context) {
     val context = LocalContext.current
     val navController = rememberNavController()
 
-    val isSignedIn by Store.get(context, key = StoreKey.IsSignedIn, default = false)
-        .collectAsState(initial = false)
+    val signedInUser by Store.get(context, key = StoreKey.User, default = null)
+        .collectAsState(initial = 0)
 
 
     NorthLearnTheme {
@@ -34,23 +36,25 @@ fun Root(applicationContext: Context) {
         ) {
             NavHost(
                 navController = navController,
-                startDestination = if (isSignedIn) {
+                startDestination = if (signedInUser !== null) {
                     Views.Home.name
                 } else {
                     Views.Login.name
                 }
             ) {
-                composable(Views.Login.name) {
-                    Login()
-                }
+                composable(Views.Login.name) { Login() }
 
                 composable(Views.Home.name) {
-                    Home()
+                    Home(
+                        navController = navController,
+                        userID = signedInUser
+                    )
                 }
 
-                composable(Views.Quiz.name) {
-                    Quiz()
-                }
+                composable(Views.Quiz.name) { Quiz() }
+                composable(Views.QuizSplash.name) { QuizSplash(navController = navController) }
+
+                composable(Views.Notes.name) { Notes() }
             }
         }
     }
