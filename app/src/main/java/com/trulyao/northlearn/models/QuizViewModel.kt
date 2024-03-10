@@ -64,12 +64,14 @@ class QuizViewModel() : ViewModel() {
 
     // Read and deserialize the dataset from the on-disk cache
     private fun readDataFile(context: Context): List<Animal> {
+        println("========> Reading from local cache")
         val rawData = getDataPath(context).readText(Charset.defaultCharset())
         return Json.decodeFromString<List<Animal>>(rawData);
     }
 
     // Fetch the data set from the remote API and cache it locally for faster retrieval next time
     private suspend fun loadDataFromAPI(context: Context): List<Animal> {
+        println("========> Fetching data from API")
         val dataSet = AnimalsAPI.retrofitService.getAnimals()
         saveDataSetToDisk(context, dataSet)
         return dataSet;
