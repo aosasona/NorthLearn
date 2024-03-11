@@ -35,15 +35,14 @@ fun QuizSplash(navController: NavController) {
             Spacer(modifier = Modifier.size(12.dp))
 
             Text(
-                text = "You will be presented with a number of random images every round (with no time limit) and you have to enter the name of the animal in each image displayed (no case sensitivity), every correct guess will land you an additional point, do you understand?",
+                text = "You will be presented with a number of random images every round (with no time limit) and you have to enter the name of the animal in each image displayed (no case sensitivity), every correct guess will land you get 10 points, do you understand?",
                 color = Color.Gray,
             )
         }
 
         Row(
             horizontalArrangement = Arrangement.End,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Button(onClick = { navController.navigate(Views.Quiz.name) { popUpTo(Views.Home.name) } }) {
                 Text(text = "Yes, start quiz")

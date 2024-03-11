@@ -8,7 +8,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.http.GET
 
-const val API_URL = "https://animapi.fly.dev"
+public const val API_URL = "https://animapi.fly.dev"
 
 private val json = Json {
     ignoreUnknownKeys = true

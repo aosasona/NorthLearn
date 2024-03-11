@@ -1,7 +1,10 @@
 package com.trulyao.northlearn.models
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -15,31 +18,82 @@ import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import kotlin.random.Random
 
-data class CurrentRound(var selectedAnimals: List<Animal> = listOf(), var score: Int = 0);
+data class Question(
+    val animal: Animal,
+    var answer: MutableState<String> = mutableStateOf(""),
+    var hasBeenMarked: MutableState<Boolean> = mutableStateOf(false),
+)
+
+data class CurrentRound(
+    var questions: MutableList<Question> = mutableStateListOf(),
+    var score: MutableState<Int> = mutableIntStateOf(0),
+    var currentQuestion: MutableState<Int> = mutableIntStateOf(0),
+);
 
 // Interface (acting like an algebraic data type) for representing the various states the UI can be in at any given time
 sealed interface QuizViewState {
-    data class Success(val animals: List<Animal>, val currentRound: CurrentRound) : QuizViewState
+    data class Success(val animals: List<Animal>, var currentRound: CurrentRound) : QuizViewState
     data object Error : QuizViewState
     data object Loading : QuizViewState
 }
 
 class QuizViewModel() : ViewModel() {
+    public val numQuestions = 10
     var uiState: QuizViewState by mutableStateOf(QuizViewState.Loading)
         private set
 
     public fun load(context: Context) {
         getAnimals(context)
-        startRound()
     }
 
     // Select random animals from the dataset
     public fun startRound() {
+        if (uiState !is QuizViewState.Success) return;
+
+        val state = (uiState as QuizViewState.Success)
+        val dataSetSize = state.animals.size
+
+        var attempts = 0 // this is used to make sure we don't infinitely retry
+        val selectedIndices = arrayListOf<Int>()
+
+        // this runs as long as is required (and under a certain limit) to make sure we don't have duplicate questions
+        do {
+            val randomIndices = List(numQuestions) { Random.nextInt(0, dataSetSize) }.distinct()
+            selectedIndices.addAll(randomIndices)
+            attempts += 1
+        } while (selectedIndices.size < numQuestions && attempts <= 5)
+
+
+        // Append the questions to the current round
+        for (index in selectedIndices) {
+            if (state.animals.size < index) continue
+            val question = Question(animal = state.animals[index])
+            state.currentRound.questions.add(question)
+        }
+    }
+
+    // Util method to update the current round's points with some guardrails
+    public fun addPoints() {
+        if (uiState !is QuizViewState.Success) return;
+        val state = (uiState as QuizViewState.Success)
+
+        if (state.currentRound.score.equals(state.currentRound.questions.size)) return;
+        state.currentRound.score.value += 10
+    }
+
+    public fun reset() {
+        if (uiState !is QuizViewState.Success) return;
+        val state = (uiState as QuizViewState.Success)
+
+        state.currentRound.score.value = 0
+        state.currentRound.currentQuestion.value = 0
+        state.currentRound.questions.clear()
     }
 
     private fun getDataPath(context: Context): Path {
-        return Path(context.filesDir.toString(), "animals.json")
+        return Path(context.filesDir.toString(), "dataset.json")
     }
 
     // Fetch animals from remote API if the local cache (aka animals.json on disk) doesn't contain it
