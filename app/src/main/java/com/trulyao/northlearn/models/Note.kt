@@ -7,12 +7,20 @@ import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
+import kotlin.io.path.extension
+import kotlin.io.path.fileSize
 import kotlin.io.path.isDirectory
 import kotlin.io.path.walk
 
 data class Note(val name: String, val size: Int)
 
-data class Content(val name: String, val path: Path, val isDirectory: Boolean)
+data class Content(
+    val name: String,
+    val extension: String,
+    val path: Path,
+    val size: Long,
+    val isDirectory: Boolean,
+)
 
 class NoteService(context: Context) {
     private val notesDir = Path(context.filesDir.toString(), "notes")
@@ -38,7 +46,9 @@ class NoteService(context: Context) {
         for (file in folderIter) {
             val content = Content(
                 name = file.fileName.toString(),
+                extension = file.extension,
                 path = file.toAbsolutePath(),
+                size = file.fileSize(),
                 isDirectory = file.isDirectory()
             )
 
