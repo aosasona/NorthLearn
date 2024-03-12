@@ -64,7 +64,7 @@ fun Root(applicationContext: Context) {
                 composable(Views.Quiz.name) { Quiz(navController, quizViewModel) }
                 composable(Views.QuizScore.name) { QuizResult(navController, quizViewModel) }
 
-                composable(Views.Notes.name) { Notes() }
+                composable(Views.Notes.name) { Notes(navController = navController) }
             }
         }
     }
