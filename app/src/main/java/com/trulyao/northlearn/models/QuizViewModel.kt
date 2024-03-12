@@ -59,11 +59,11 @@ class QuizViewModel() : ViewModel() {
         val selectedIndices = arrayListOf<Int>()
 
         // this runs as long as is required (and under a certain limit) to make sure we don't have duplicate questions
-        do {
+        while (selectedIndices.size < numQuestions && attempts <= 5) {
             val randomIndices = List(numQuestions) { Random.nextInt(0, dataSetSize) }.distinct()
             selectedIndices.addAll(randomIndices)
             attempts += 1
-        } while (selectedIndices.size < numQuestions && attempts <= 5)
+        }
 
 
         // Append the questions to the current round
@@ -83,6 +83,7 @@ class QuizViewModel() : ViewModel() {
         state.currentRound.score.value += 10
     }
 
+    // Reset the state of the current round
     public fun reset() {
         if (uiState !is QuizViewState.Success) return;
         val state = (uiState as QuizViewState.Success)
