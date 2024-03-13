@@ -58,6 +58,22 @@ class NoteService(context: Context) {
         return contents
     }
 
+    public fun createDirectory(folderName: String): Content? {
+        val folderPath = Path(notesDir.toString(), folderName);
+        if (folderPath.exists()) {
+            return null
+        }
+
+        val target = folderPath.createDirectory()
+        return Content(
+            name = target.fileName.toString(),
+            extension = target.extension,
+            path = target.toAbsolutePath(),
+            size = target.fileSize(),
+            isDirectory = true
+        )
+    }
+
     private fun notesDirExists(): Boolean {
         return notesDir.exists();
     }
