@@ -21,7 +21,7 @@ fun RoundedInput(
     value: String,
     onChange: (String) -> Unit,
     placeholder: @Composable () -> Unit,
-    keyboardOptions: KeyboardOptions,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     visualTransformation: VisualTransformation? = null,
 ) {
     TextField(

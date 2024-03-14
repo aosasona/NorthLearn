@@ -60,8 +60,16 @@ fun Home(navController: NavController, userID: Int?) {
 
         Spacer(modifier = Modifier.size(20.dp))
 
-        NavButton(title = "My Notes", destination = Views.Notes.name, navController = navController)
-        NavButton(title = "Quiz", destination = Views.QuizSplash.name, navController = navController)
+        NavButton(
+            title = "My Notes",
+            destination = "${Views.Notes.name}/(null)",
+            navController = navController
+        )
+        NavButton(
+            title = "Quiz",
+            destination = Views.QuizSplash.name,
+            navController = navController
+        )
 
         // Footer
         Spacer(modifier = Modifier.size(28.dp))

@@ -11,9 +11,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.trulyao.northlearn.models.QuizViewModel
 import com.trulyao.northlearn.ui.theme.NorthLearnTheme
 import com.trulyao.northlearn.utils.Store
@@ -64,7 +66,17 @@ fun Root(applicationContext: Context) {
                 composable(Views.Quiz.name) { Quiz(navController, quizViewModel) }
                 composable(Views.QuizScore.name) { QuizResult(navController, quizViewModel) }
 
-                composable(Views.Notes.name) { Notes(navController = navController) }
+                composable(
+                    "${Views.Notes.name}/{folderName}",
+                    arguments = listOf(navArgument("folderName") {
+                        type = NavType.StringType
+                    })
+                ) { backStackEntry ->
+                    Notes(
+                        navController = navController,
+                        currentFolderProp = backStackEntry.arguments?.getString("folderName")
+                    )
+                }
             }
         }
     }

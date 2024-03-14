@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -41,9 +43,16 @@ fun QuizSplash(navController: NavController) {
         }
 
         Row(
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
+            Text(
+                "Internet connection required",
+                color = MaterialTheme.colorScheme.outline,
+                fontSize = 14.sp
+            )
+
             Button(onClick = { navController.navigate(Views.Quiz.name) { popUpTo(Views.Home.name) } }) {
                 Text(text = "Yes, start quiz")
             }
