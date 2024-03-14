@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
@@ -66,7 +67,9 @@ import kotlin.io.path.Path
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Notes(navController: NavController, currentFolderProp: String?) {
-    val currentFolder = if (currentFolderProp == "(null)") null else currentFolderProp
+    val currentFolder = (if (currentFolderProp == "(null)")
+        null
+    else currentFolderProp)?.replace(".", "/")
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -112,7 +115,7 @@ fun Notes(navController: NavController, currentFolderProp: String?) {
                 val name = sanitize(folderName) // clean up all other "illegal" characters
                 if (name.isEmpty()) throw AppException("Folder name must be at least one character")
                 noteService.createDirectory(
-                    Path(folderName, folderName)
+                    Path(currentFolder ?: "", folderName)
                 )
                 loadContent() // force view to reload
             } catch (e: Exception) {
@@ -139,8 +142,9 @@ fun Notes(navController: NavController, currentFolderProp: String?) {
     fun handleContentItemClick(content: Content) {
         if (content.isDirectory) {
             if (content.name.isEmpty()) return;
-            // change the current directory and "re-navigate" to retain history
-            navController.navigate("${Views.Notes.name}/${currentFolder}")
+            // We need to convert the path to the format "x.x.x" to make it usable as a path param, mainly for nested folders, e.g. "${Views.Notes.name}/foo/bar/baz" would not work as a valid nav route
+            val target = noteService.pathToNavFriendlyString(content.path)
+            navController.navigate("${Views.Notes.name}/${target}")
         }
     }
 
@@ -148,54 +152,8 @@ fun Notes(navController: NavController, currentFolderProp: String?) {
         loadContent()
     }
 
-    if (isLoading) {
-        return Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.width(40.dp),
-                color = MaterialTheme.colorScheme.primary,
-            )
-
-            Spacer(modifier = Modifier.size(18.dp))
-
-            Text(text = "Loading...", color = MaterialTheme.colorScheme.secondary)
-        }
-    }
-
-    Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        modifier = Modifier.fillMaxSize()
-    ) { contentPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding)
-        ) {
-            stickyHeader {
-                Header(
-                    loadContent = { loadContent() },
-                    showHeaderMenu = showHeaderMenu,
-                    showCreateFolderDialog = showCreateFolderDialog,
-                    showCreateNoteDialog = showCreateNoteDialog
-                )
-            }
-
-            items(contents) { content ->
-                Surface(
-                    onClick = { /* TODO: navigate */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    ContentItem(
-                        content = content,
-                        noteService = noteService,
-                        reload = { loadContent() })
-                }
-            }
-        }
-
+    @Composable
+    fun CreationDialogs() {
         // Create folder prompt
         PromptDialog(
             visible = showCreateFolderDialog.value,
@@ -221,6 +179,87 @@ fun Notes(navController: NavController, currentFolderProp: String?) {
             dialogTitle = "New note",
             dialogText = "Enter a filename"
         )
+    }
+
+    if (isLoading) {
+        return Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.width(40.dp),
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+            Spacer(modifier = Modifier.size(18.dp))
+
+            Text(text = "Loading...", color = MaterialTheme.colorScheme.secondary)
+        }
+    } else if (contents.isEmpty()) {
+        return Scaffold(topBar = {
+            Header(
+                loadContent = { loadContent() },
+                showHeaderMenu = showHeaderMenu,
+                showCreateFolderDialog = showCreateFolderDialog,
+                showCreateNoteDialog = showCreateNoteDialog
+            )
+        }) { contentPadding ->
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding)
+            ) {
+                Icon(
+                    Icons.Default.FolderOpen,
+                    "Empty",
+                    modifier = Modifier.size(64.dp),
+                    tint = MaterialTheme.colorScheme.outline
+                )
+
+                Spacer(modifier = Modifier.size(10.dp))
+
+                Text(text = "Nothing here yet...", color = MaterialTheme.colorScheme.outline)
+            }
+
+            CreationDialogs()
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { contentPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+        ) {
+            stickyHeader {
+                Header(
+                    loadContent = { loadContent() },
+                    showHeaderMenu = showHeaderMenu,
+                    showCreateFolderDialog = showCreateFolderDialog,
+                    showCreateNoteDialog = showCreateNoteDialog
+                )
+            }
+
+            items(contents) { content ->
+                Surface(
+                    onClick = { handleContentItemClick(content) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    ContentItem(
+                        content = content,
+                        noteService = noteService,
+                        reload = { loadContent() })
+                }
+            }
+        }
+
+        CreationDialogs()
     }
 }
 

@@ -19,12 +19,11 @@ import kotlin.io.path.nameWithoutExtension
 class AppException(message: String) : Exception() {
 }
 
-data class Note(val name: String, val size: Int)
-
 data class Content(
     val name: String,
     val extension: String,
     val path: Path,
+    val absolutePath: Path,
     val size: Long,
     val isDirectory: Boolean,
 )
@@ -36,6 +35,13 @@ class NoteService(context: Context) {
         if (!notesDirExists()) {
             createNotesDir()
         }
+    }
+
+    public fun pathToNavFriendlyString(path: Path): String {
+        return path.toString()
+            .replace(notesDir.toString(), "")
+            .trim { it == '/' }
+            .replace("/", ".")
     }
 
     // Get all files in the given directory, the absence of a folder name (null; default) returns the files in the root `notes` directory
@@ -50,12 +56,13 @@ class NoteService(context: Context) {
         }
 
         withContext(Dispatchers.IO) {
-            Files.walk(folder).filter { it != folder }
+            Files.walk(folder, 1).filter { it != folder }
         }.forEach { file ->
             val content = Content(
                 name = file.nameWithoutExtension,
                 extension = file.extension,
-                path = file.toAbsolutePath(),
+                path = file,
+                absolutePath = file.toAbsolutePath(),
                 size = file.fileSize(),
                 isDirectory = file.isDirectory()
             )
@@ -76,7 +83,8 @@ class NoteService(context: Context) {
         return Content(
             name = target.fileName.toString(),
             extension = target.extension,
-            path = target.toAbsolutePath(),
+            path = target,
+            absolutePath = target.toAbsolutePath(),
             size = target.fileSize(),
             isDirectory = true
         )
@@ -93,7 +101,8 @@ class NoteService(context: Context) {
             return Content(
                 name = target.fileName.toString(),
                 extension = target.extension,
-                path = target.toAbsolutePath(),
+                path = target,
+                absolutePath = target.toAbsolutePath(),
                 size = target.fileSize(),
                 isDirectory = true
             )
