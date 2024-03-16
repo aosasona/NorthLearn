@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.trulyao.northlearn.components.Loading
 import com.trulyao.northlearn.models.AppException
@@ -169,7 +170,7 @@ fun NoteView(navController: NavController, currentNote: String?) {
         TextField(
             value = note.content.value,
             onValueChange = { value -> note.content.value = value },
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 18.sp),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
