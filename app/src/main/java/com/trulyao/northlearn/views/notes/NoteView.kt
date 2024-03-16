@@ -48,6 +48,7 @@ import kotlin.io.path.Path
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteView(navController: NavController, currentNote: String?) {
+
     val context = LocalContext.current
     val noteService = NoteService(context)
     val scope = rememberCoroutineScope()
@@ -58,10 +59,11 @@ fun NoteView(navController: NavController, currentNote: String?) {
         return
     }
 
-    val notePath = currentNote.replace(
-        "/(?<!\\.)\\.(?!txt)/gm",
+
+    val notePath = currentNote.split(".txt")[0].replace(
+        ".",
         "/"
-    ) // replace all dots with / except the extension
+    ) + ".txt" // replace all dots with / except the extension
 
     var isLoading by remember { mutableStateOf(true) }
     var isSaving by remember { mutableStateOf(false) }
