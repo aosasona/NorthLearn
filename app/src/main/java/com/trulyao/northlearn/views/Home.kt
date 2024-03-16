@@ -70,6 +70,11 @@ fun Home(navController: NavController, userID: Int?) {
             destination = Views.QuizSplash.name,
             navController = navController
         )
+        NavButton(
+            title = "Calculator",
+            destination = Views.Calculator.name,
+            navController = navController
+        )
 
         // Footer
         Spacer(modifier = Modifier.size(28.dp))

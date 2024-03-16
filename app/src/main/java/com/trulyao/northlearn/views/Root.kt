@@ -20,6 +20,7 @@ import com.trulyao.northlearn.models.QuizViewModel
 import com.trulyao.northlearn.ui.theme.NorthLearnTheme
 import com.trulyao.northlearn.utils.Store
 import com.trulyao.northlearn.utils.StoreKey
+import com.trulyao.northlearn.views.calculator.Calculator
 import com.trulyao.northlearn.views.notes.NoteView
 import com.trulyao.northlearn.views.notes.Notes
 import com.trulyao.northlearn.views.quiz.Quiz
@@ -61,6 +62,10 @@ fun Root(applicationContext: Context) {
                         navController = navController,
                         userID = signedInUser
                     )
+                }
+
+                composable(Views.Calculator.name) {
+                    Calculator()
                 }
 
                 composable(Views.QuizSplash.name) { QuizSplash(navController = navController) }
