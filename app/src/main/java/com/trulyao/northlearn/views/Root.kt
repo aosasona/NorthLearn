@@ -20,6 +20,7 @@ import com.trulyao.northlearn.models.QuizViewModel
 import com.trulyao.northlearn.ui.theme.NorthLearnTheme
 import com.trulyao.northlearn.utils.Store
 import com.trulyao.northlearn.utils.StoreKey
+import com.trulyao.northlearn.views.notes.NoteView
 import com.trulyao.northlearn.views.notes.Notes
 import com.trulyao.northlearn.views.quiz.Quiz
 import com.trulyao.northlearn.views.quiz.QuizResult
@@ -75,6 +76,18 @@ fun Root(applicationContext: Context) {
                     Notes(
                         navController = navController,
                         currentFolderProp = backStackEntry.arguments?.getString("folderName")
+                    )
+                }
+
+                composable(
+                    "${Views.Note.name}/{filename}",
+                    arguments = listOf(navArgument("filename") {
+                        type = NavType.StringType
+                    })
+                ) { backStackEntry ->
+                    NoteView(
+                        navController = navController,
+                        currentNote = backStackEntry.arguments?.getString("filename")
                     )
                 }
             }

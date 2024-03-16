@@ -1,22 +1,32 @@
 package com.trulyao.northlearn.models
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.createFile
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.fileSize
 import kotlin.io.path.isDirectory
 import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
-class AppException(message: String) : Exception() {
+class AppException : Exception {
+    constructor(message: String) : super(message)
+    constructor(message: String, cause: Throwable) : super(message, cause)
+    constructor(cause: Throwable) : super(cause)
 }
 
 data class Content(
@@ -26,6 +36,12 @@ data class Content(
     val absolutePath: Path,
     val size: Long,
     val isDirectory: Boolean,
+)
+
+data class NoteModel(
+    val name: String,
+    var content: MutableState<String>,
+    val path: Path,
 )
 
 class NoteService(context: Context) {
@@ -73,7 +89,23 @@ class NoteService(context: Context) {
         return contents.sortedBy { content -> !content.isDirectory }
     }
 
-    public suspend fun createDirectory(path: Path): Content? {
+    public suspend fun getNote(filename: String): NoteModel {
+        val path = Path(notesDir.toString(), filename)
+        if (!path.exists()) throw Exception("File not found")
+
+        return NoteModel(
+            name = path.nameWithoutExtension,
+            path = path,
+            content = mutableStateOf(path.readText(Charset.defaultCharset()))
+        )
+    }
+
+    public suspend fun saveNote(path: Path, content: String) {
+        if (!path.exists()) throw Exception("File not found")
+        path.writeText(content, Charset.defaultCharset())
+    }
+
+    public suspend fun createDirectory(path: Path): Content {
         val folderPath = Path(notesDir.toString(), path.toString());
         if (folderPath.exists()) {
             throw AppException("Folder already exists")
@@ -91,24 +123,30 @@ class NoteService(context: Context) {
     }
 
     public suspend fun createFile(path: Path): Content {
-        try {
-            val filePath = Path(notesDir.toString(), path.toString());
-            if (filePath.exists()) {
-                throw AppException("File already exists")
-            }
-
-            val target = filePath.createFile()
-            return Content(
-                name = target.fileName.toString(),
-                extension = target.extension,
-                path = target,
-                absolutePath = target.toAbsolutePath(),
-                size = target.fileSize(),
-                isDirectory = true
-            )
-        } catch (e: Exception) {
-            throw Exception("Failed to create file")
+        val filePath = Path(notesDir.toString(), path.toString());
+        if (filePath.exists()) {
+            throw AppException("File already exists")
         }
+
+        val target = filePath.createFile()
+        return Content(
+            name = target.fileName.toString(),
+            extension = target.extension,
+            path = target,
+            absolutePath = target.toAbsolutePath(),
+            size = target.fileSize(),
+            isDirectory = true
+        )
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    public suspend fun deleteItem(path: Path) {
+        if (path.isDirectory()) {
+            path.deleteRecursively()
+            return;
+        }
+
+        path.deleteIfExists()
     }
 
     private fun notesDirExists(): Boolean {
