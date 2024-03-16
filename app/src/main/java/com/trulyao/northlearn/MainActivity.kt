@@ -18,6 +18,7 @@ class MainActivity : ComponentActivity(), ImageLoaderFactory {
         }
     }
 
+    // Implement Coil's ImageLoaderFactory to configure image caching
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(applicationContext)
             .memoryCache {

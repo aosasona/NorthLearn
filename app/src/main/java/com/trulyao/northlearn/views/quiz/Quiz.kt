@@ -58,8 +58,8 @@ import java.util.Locale
 fun Quiz(navController: NavController, quizViewModel: QuizViewModel) {
     val context = LocalContext.current
 
-    LaunchedEffect("quiz") {
-        quizViewModel.reset()
+    // Run everytime this view is rendered
+    LaunchedEffect(true) {
         quizViewModel.startRound()
     }
 
@@ -157,7 +157,7 @@ fun QuizScreen(context: Context, navController: NavController, quizViewModel: Qu
             ) {
                 Text(
                     text = "${state.currentRound.score.value} points",
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight(400),
                     fontSize = 18.sp,
                 )

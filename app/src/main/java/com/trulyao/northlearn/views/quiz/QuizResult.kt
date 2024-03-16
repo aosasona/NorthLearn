@@ -12,6 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -26,7 +29,11 @@ import com.trulyao.northlearn.views.Views
 fun QuizResult(navController: NavController, quizViewModel: QuizViewModel) {
     val state = quizViewModel.uiState as QuizViewState.Success
 
-    val percent = ((state.currentRound.score.value / 10) / quizViewModel.numQuestions) * 100
+    val percent by remember {
+        derivedStateOf {
+            (state.currentRound.score.value / (quizViewModel.numQuestions * 10)) * 100
+        }
+    }
 
     Column(
         verticalArrangement = Arrangement.Center,

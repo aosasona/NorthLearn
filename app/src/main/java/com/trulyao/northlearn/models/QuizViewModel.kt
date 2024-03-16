@@ -52,6 +52,8 @@ class QuizViewModel() : ViewModel() {
     public fun startRound() {
         if (uiState !is QuizViewState.Success) return;
 
+        reset()
+
         val state = (uiState as QuizViewState.Success)
         val dataSetSize = state.animals.size
 
