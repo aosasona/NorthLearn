@@ -1,6 +1,5 @@
 package com.trulyao.northlearn.views
 
-import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,7 +28,7 @@ import com.trulyao.northlearn.views.quiz.QuizSplash
 
 
 @Composable
-fun Root(applicationContext: Context) {
+fun Root() {
     val context = LocalContext.current
     val navController = rememberNavController()
     val quizViewModel: QuizViewModel = viewModel()

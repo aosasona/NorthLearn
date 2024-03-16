@@ -1,5 +1,6 @@
 package com.trulyao.northlearn.views.quiz
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ErrorResult
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.trulyao.northlearn.models.API_URL
 import com.trulyao.northlearn.models.QuizViewModel
 import com.trulyao.northlearn.models.QuizViewState
@@ -59,14 +64,19 @@ fun Quiz(navController: NavController, quizViewModel: QuizViewModel) {
     }
 
     when (quizViewModel.uiState) {
-        is QuizViewState.Success -> QuizScreen(navController = navController, quizViewModel)
+        is QuizViewState.Success -> QuizScreen(
+            context = context,
+            navController = navController,
+            quizViewModel
+        )
+
         is QuizViewState.Loading -> LoadingScreen()
         is QuizViewState.Error -> ErrorScreen(retry = { quizViewModel.load(context) })
     }
 }
 
 @Composable
-fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel) {
+fun QuizScreen(context: Context, navController: NavController, quizViewModel: QuizViewModel) {
     val state = quizViewModel.uiState as QuizViewState.Success
 
     if (state.currentRound.questions.isEmpty()) return LoadingScreen()
@@ -106,6 +116,26 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel) {
         }
     }
 
+    val listener = object : ImageRequest.Listener {
+        override fun onError(request: ImageRequest, result: ErrorResult) {
+            super.onError(request, result)
+        }
+
+        override fun onSuccess(request: ImageRequest, result: SuccessResult) {
+            super.onSuccess(request, result)
+        }
+    }
+
+    val imageSrc = "${API_URL}/images/${currentQuestion.animal.filename}"
+    val imageRequest = ImageRequest.Builder(context = context)
+        .data(imageSrc)
+        .listener(listener)
+        .memoryCacheKey(imageSrc)
+        .diskCacheKey(imageSrc)
+        .diskCachePolicy(CachePolicy.ENABLED)
+        .memoryCachePolicy(CachePolicy.ENABLED)
+        .build()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
@@ -136,7 +166,7 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel) {
 
         Column {
             AsyncImage(
-                model = "${API_URL}/images/${currentQuestion.animal.filename}",
+                model = imageRequest,
                 contentDescription = currentQuestion.animal.name,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
