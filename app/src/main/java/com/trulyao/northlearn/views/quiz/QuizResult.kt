@@ -30,6 +30,7 @@ fun QuizResult(navController: NavController, quizViewModel: QuizViewModel) {
     val state = quizViewModel.uiState as QuizViewState.Success
 
     val percent by remember {
+        // Calculate score percentage
         derivedStateOf {
             (state.currentRound.score.value / (quizViewModel.numQuestions * 10)) * 100
         }
@@ -43,6 +44,7 @@ fun QuizResult(navController: NavController, quizViewModel: QuizViewModel) {
             .padding(20.dp)
     ) {
         if (percent >= 50.00) {
+            // Pass
             Text(
                 "Passed!", fontSize = 32.sp, fontWeight = FontWeight(700),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -55,6 +57,7 @@ fun QuizResult(navController: NavController, quizViewModel: QuizViewModel) {
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         } else {
+            // Fail
             Text(
                 "Oops",
                 fontSize = 32.sp,
@@ -82,7 +85,6 @@ fun QuizResult(navController: NavController, quizViewModel: QuizViewModel) {
 
         Spacer(modifier = Modifier.size(32.dp))
 
-        // Buttons in bottom of the screen
         Row(horizontalArrangement = Arrangement.End) {
             TextButton(onClick = { navController.navigate(Views.Home.name) }) {
                 Text("Go Home")
@@ -91,7 +93,7 @@ fun QuizResult(navController: NavController, quizViewModel: QuizViewModel) {
             Spacer(modifier = Modifier.size(10.dp))
 
             Button(onClick = {
-                navController.navigate(Views.Quiz.name)
+                navController.navigate(Views.Quiz.name) { popUpTo(Views.Home.name) }
             }) {
                 Text("Try again")
             }

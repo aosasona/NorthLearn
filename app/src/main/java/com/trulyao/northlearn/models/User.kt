@@ -6,7 +6,7 @@ data class User(val id: Int, val username: String, val password: String)
 
 public typealias Users = ArrayList<User>
 
-val users: Users = arrayListOf<User>(
+val users: Users = arrayListOf(
     User(id = 1, username = "merkyle", password = "Merkyle06"),
     User(id = 2, username = "jen89", password = "Dadablue129"),
     User(id = 3, username = "anias", password = "Castiel609"),

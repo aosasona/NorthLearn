@@ -15,8 +15,6 @@ import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +39,7 @@ import com.trulyao.northlearn.components.notes.Header
 import com.trulyao.northlearn.models.AppException
 import com.trulyao.northlearn.models.Content
 import com.trulyao.northlearn.models.NoteService
+import com.trulyao.northlearn.utils.Alert
 import com.trulyao.northlearn.views.Views
 import kotlinx.coroutines.launch
 import kotlin.io.path.Path
@@ -54,7 +53,6 @@ fun Notes(navController: NavController, currentFolderProp: String?) {
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
     val noteService = NoteService(context)
 
     var isLoading by remember { mutableStateOf(true) }
@@ -75,9 +73,7 @@ fun Notes(navController: NavController, currentFolderProp: String?) {
             is AppException -> e.message
             else -> "Something went wrong"
         }
-        scope.launch {
-            snackbarHostState.showSnackbar(message!!)
-        }
+        Alert.show(context, message!!)
     }
 
     fun loadContent() {
@@ -205,7 +201,6 @@ fun Notes(navController: NavController, currentFolderProp: String?) {
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = Modifier.fillMaxSize()
     ) { contentPadding ->
         LazyColumn(

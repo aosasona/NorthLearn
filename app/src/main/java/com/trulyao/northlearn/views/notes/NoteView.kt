@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -43,6 +42,7 @@ import com.trulyao.northlearn.components.Loading
 import com.trulyao.northlearn.models.AppException
 import com.trulyao.northlearn.models.NoteModel
 import com.trulyao.northlearn.models.NoteService
+import com.trulyao.northlearn.utils.Alert
 import kotlinx.coroutines.launch
 import kotlin.io.path.Path
 
@@ -53,7 +53,6 @@ fun NoteView(navController: NavController, currentNote: String?) {
     val context = LocalContext.current
     val noteService = NoteService(context)
     val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     if (currentNote.isNullOrEmpty()) {
         navController.navigateUp()
@@ -87,9 +86,7 @@ fun NoteView(navController: NavController, currentNote: String?) {
             is AppException -> e.message
             else -> "Something went wrong"
         }
-        scope.launch {
-            snackbarHostState.showSnackbar(message!!)
-        }
+        Alert.show(context, message!!)
     }
 
     fun save() {

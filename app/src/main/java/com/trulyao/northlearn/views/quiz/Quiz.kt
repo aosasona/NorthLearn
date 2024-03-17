@@ -220,7 +220,7 @@ fun QuizScreen(context: Context, navController: NavController, quizViewModel: Qu
 
             // Next question or submit
             Button(
-                onClick = { if (isLastQuestion) finish() else next() },
+                onClick = { if (isLastQuestion) finish() else next() }, // If on last question, submit on next press
                 enabled = currentQuestion.answer.value.isNotEmpty(),
                 modifier = Modifier
                     .clip(CircleShape)

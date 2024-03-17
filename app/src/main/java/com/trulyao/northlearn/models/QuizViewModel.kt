@@ -86,7 +86,7 @@ class QuizViewModel() : ViewModel() {
     }
 
     // Reset the state of the current round
-    public fun reset() {
+    private fun reset() {
         if (uiState !is QuizViewState.Success) return;
         val state = (uiState as QuizViewState.Success)
 

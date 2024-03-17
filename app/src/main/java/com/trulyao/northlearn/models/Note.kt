@@ -163,12 +163,11 @@ class NoteService(context: Context) {
     }
 }
 
-// Convert raw byte sizes to human-readable format (B, KB, MB, GB)
+// Convert raw byte sizes to an human-readable format (B, KB, MB, GB)
 public fun bytesToHumanReadableFormat(originalSize: Long): String {
     val size = originalSize.toDouble()
     val humanReadableSize: Double
     val measurement: String
-
 
     if (size < 1000) {
         humanReadableSize = size

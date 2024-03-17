@@ -9,10 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.http.GET
 
 public const val API_URL = "https://animapi.fly.dev"
-
-private val json = Json {
-    ignoreUnknownKeys = true
-}
+private val json = Json { ignoreUnknownKeys = true }
 
 // Base retrofit instance which is then reused by the service (i.e implements the service)
 private val retrofit = Retrofit.Builder()

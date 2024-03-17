@@ -17,12 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 enum class KeyType {
-    Number,
-    Operand,
-    Special
+    Number, // Just number 0-9
+    Operand, // Operands like +, -, x etc
+    Special // Neither numbers nor operands like "CE" (Clear Everything), Delete etc
 }
 
 enum class Key(val value: String, val type: KeyType) {
+    // Number
     One("1", KeyType.Number),
     Two("2", KeyType.Number),
     Three("3", KeyType.Number),
@@ -33,18 +34,27 @@ enum class Key(val value: String, val type: KeyType) {
     Eight("8", KeyType.Number),
     Nine("9", KeyType.Number),
     Zero("0", KeyType.Number),
-    Dot(".", KeyType.Number),
+    Dot(
+        ".",
+        KeyType.Number
+    ), // treating it as a number because it needs to be part of the "current buffer" (needs to be rendered)
+
+    // Operand
     Plus("+", KeyType.Operand),
     Subtract("-", KeyType.Operand),
     Divide("/", KeyType.Operand),
     Multiply("x", KeyType.Operand),
     Exponent("^", KeyType.Operand),
     Equals("=", KeyType.Operand),
+
+    // Special keys
     Clear("CE", KeyType.Special),
     Delete("⌫", KeyType.Special),
-    None("", KeyType.Operand);
+
+    None("", KeyType.Operand); // the default "empty" state for current operand
 }
 
+// Buttons "matrix" to render as a grid
 val buttons = listOf(
     listOf(Key.Clear, Key.Delete, Key.Exponent, Key.Plus),
     listOf(Key.Nine, Key.Eight, Key.Seven, Key.Subtract),
@@ -56,10 +66,7 @@ val buttons = listOf(
 
 @Composable
 fun Keypad(handleKeyPress: (Key) -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         buttons.forEach { members ->
             Row(modifier = Modifier.fillMaxWidth()) {
                 members.forEach { button ->
@@ -86,7 +93,7 @@ fun Keypad(handleKeyPress: (Key) -> Unit) {
                     ) {
                         Text(
                             button.value,
-                            fontSize = if (button.type != KeyType.Number) 22.sp else 20.sp
+                            fontSize = if (button.type != KeyType.Number) 24.sp else 22.sp
                         )
                     }
                 }

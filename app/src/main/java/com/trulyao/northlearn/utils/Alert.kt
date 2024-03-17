@@ -10,7 +10,7 @@ public final class Alert {
     }
 
     companion object {
-        fun show(context: Context, message: String, alertType: AlertType = AlertType.Success) {
+        fun show(context: Context, message: String, alertType: AlertType = AlertType.Error) {
             val alertBuilder = AlertDialog.Builder(context)
             alertBuilder.setTitle(
                 when (alertType) {

@@ -76,8 +76,8 @@ fun Home(navController: NavController, userID: Int?) {
             navController = navController
         )
 
-        // Footer
         Spacer(modifier = Modifier.size(28.dp))
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
